@@ -104,15 +104,20 @@ impl Database {
     }
 
     /// Get all messages with an ID greater than the given one
-    pub fn get_messages_after_id(&self, message_id: usize) -> Result<Vec<Message>> {
+    pub fn get_messages_after_id(
+        &self,
+        channel_id: u32,
+        message_id: usize,
+    ) -> Result<Vec<Message>> {
         let mut stmt = self.0.prepare(
             "SELECT id, channel_id, user_id, contents, timestamp
-         FROM chat
-         WHERE id > ?1
-         ORDER BY id ASC",
+            FROM chat
+            WHERE (channel_id = ?2 OR user_id = ?2)
+            AND id > ?1
+            ORDER BY id ASC;",
         )?;
 
-        let rows = stmt.query_map(params![message_id], |row| {
+        let rows = stmt.query_map(params![message_id, channel_id], |row| {
             Ok(Message {
                 id: row.get::<_, i64>(0)?,
                 channel_id: row.get::<_, u32>(1)?,

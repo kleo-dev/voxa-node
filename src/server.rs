@@ -119,9 +119,9 @@ impl Server {
                     client.send(types::ServerMessage::Authenticated {
                         uuid,
                         messages: if let Some(i) = last_message {
-                            self.wrap_err(&client, self.db.get_messages_after_id(i))?
+                            self.wrap_err(&client, self.db.get_messages_after_id(uuid, i))?
                         } else {
-                            self.wrap_err(&client, self.db.get_messages_after_id(0))?
+                            self.wrap_err(&client, self.db.get_messages_after_id(uuid, 0))?
                         },
                     }),
                 )?;
