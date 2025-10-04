@@ -33,12 +33,30 @@ pub fn send(
         let c = c.clone();
         let server = server.clone();
         let msg = msg.clone();
+
         std::thread::spawn(move || {
-            server
-                .wrap_err(&c, c.send(types::ServerMessage::MessageCreate(msg)))
-                .expect("Failed to broadcast");
+            if let Some(uuid) =
+                LOGGER.extract(server.wrap_err(&c, c.get_uuid()), "Unable send message")
+            {
+                if uuid != channel_id {
+                    return;
+                }
+
+                LOGGER.extract(
+                    server.wrap_err(&c, c.send(types::ServerMessage::MessageCreate(msg))),
+                    "Failed to send message",
+                );
+            }
         });
     }
+
+    LOGGER.extract(
+        server.wrap_err(
+            &client,
+            client.send(types::ServerMessage::MessageCreate(msg)),
+        ),
+        "Failed to send message",
+    );
 
     Ok(())
 }

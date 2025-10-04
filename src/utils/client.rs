@@ -339,7 +339,10 @@ impl Client {
 
 impl Clone for Client {
     fn clone(&self) -> Self {
-        Client(self.0.try_clone().expect("failed to clone TcpStream"), None)
+        Client(
+            self.0.try_clone().expect("failed to clone TcpStream"),
+            self.1.clone(),
+        )
     }
 }
 
