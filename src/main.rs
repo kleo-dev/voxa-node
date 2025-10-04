@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 mod macros;
 mod requests;
 mod server;
