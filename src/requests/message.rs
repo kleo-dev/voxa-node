@@ -7,7 +7,7 @@ crate::logger!(LOGGER "Message Manager");
 pub fn send(
     server: &Arc<Server>,
     client: &Client,
-    channel_id: &str,
+    channel_id: u32,
     contents: &str,
 ) -> crate::Result<()> {
     LOGGER.info(format!("SendMessage to {channel_id}: {contents}"));
@@ -21,7 +21,7 @@ pub fn send(
     }
 
     let msg = server.db.insert_message(
-        &channel_id,
+        channel_id,
         client.get_uuid()?,
         &contents,
         chrono::Utc::now().timestamp(),

@@ -15,7 +15,6 @@ pub struct ServerConfig {
     server_name: String,
     server_id: String,
     port: u16,
-    channels: Vec<types::data::Channel>,
 }
 
 #[allow(dead_code)]
@@ -29,10 +28,9 @@ pub struct Server {
 impl Default for ServerConfig {
     fn default() -> Self {
         Self {
-            port: 7080,
+            port: 7090,
             server_name: format!("Server Name"),
             server_id: format!("offline-server"),
-            channels: Vec::new(),
         }
     }
 }

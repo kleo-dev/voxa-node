@@ -11,7 +11,7 @@ impl Database {
         conn.execute(
             "CREATE TABLE IF NOT EXISTS chat (
                   id          INTEGER PRIMARY KEY AUTOINCREMENT,
-                  channel_id  TEXT NOT NULL,
+                  channel_id  INTEGER NOT NULL,
                   user_id     INTEGER NOT NULL,
                   contents    TEXT NOT NULL,
                   timestamp   INTEGER NOT NULL
@@ -29,7 +29,7 @@ impl Database {
     /// Insert a message into the DB
     pub fn insert_message(
         &self,
-        channel_id: &str,
+        channel_id: u32,
         user_id: u32,
         contents: &str,
         timestamp: i64,
@@ -44,7 +44,7 @@ impl Database {
 
         Ok(Message {
             id,
-            channel_id: channel_id.to_string(),
+            channel_id,
             from: user_id,
             contents: contents.to_string(),
             timestamp,
@@ -83,7 +83,7 @@ impl Database {
         let mut rows = stmt.query_map(params![message_id], |row| {
             Ok((
                 row.get::<_, i64>(0)?,    // id
-                row.get::<_, String>(1)?, // channel_id
+                row.get::<_, u32>(1)?,    // channel_id
                 row.get::<_, u32>(2)?,    // user_id
                 row.get::<_, String>(3)?, // contents
                 row.get::<_, i64>(4)?,    // timestamp
@@ -115,7 +115,7 @@ impl Database {
         let rows = stmt.query_map(params![message_id], |row| {
             Ok(Message {
                 id: row.get::<_, i64>(0)?,
-                channel_id: row.get::<_, String>(1)?,
+                channel_id: row.get::<_, u32>(1)?,
                 from: row.get::<_, u32>(2)?,
                 contents: row.get::<_, String>(3)?,
                 timestamp: row.get::<_, i64>(4)?,

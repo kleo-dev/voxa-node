@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 pub enum ClientMessage {
     /// Send a message to a channel
     SendMessage {
-        channel_id: String,
+        channel_id: u32,
         contents: String,
     },
 
@@ -42,7 +42,7 @@ pub enum ServerMessage {
 
     /// A message was deleted
     MessageDelete {
-        channel_id: String,
+        channel_id: u32,
         message_id: usize,
     },
 
@@ -55,7 +55,7 @@ pub enum ServerMessage {
     /// Typing indicator
     Typing {
         user_id: String,
-        channel_id: String,
+        channel_id: u32,
     },
 }
 
@@ -84,7 +84,7 @@ pub mod data {
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct Message {
         pub id: i64,
-        pub channel_id: String,
+        pub channel_id: u32,
         pub from: u32,
         pub contents: String,
         pub timestamp: i64,
