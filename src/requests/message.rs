@@ -7,7 +7,7 @@ crate::logger!(LOGGER "Message Manager");
 pub fn send(
     server: &Arc<Server>,
     client: &Client,
-    channel_id: u32,
+    channel_id: &str,
     contents: &str,
 ) -> crate::Result<()> {
     LOGGER.info(format!("SendMessage to {channel_id}: {contents}"));
@@ -22,32 +22,35 @@ pub fn send(
 
     let msg = server.db.insert_message(
         channel_id,
-        client.get_uuid()?,
+        &client.get_uuid()?,
         &contents,
         chrono::Utc::now().timestamp(),
     )?;
 
-    let server = server.clone();
-
-    for c in server.clients.lock().unwrap().iter() {
-        let c = c.clone();
+    if msg.from != msg.channel_id {
         let server = server.clone();
-        let msg = msg.clone();
 
-        std::thread::spawn(move || {
-            if let Some(uuid) =
-                LOGGER.extract(server.wrap_err(&c, c.get_uuid()), "Unable send message")
-            {
-                if uuid != channel_id {
-                    return;
+        for c in server.clients.lock().unwrap().iter() {
+            let c = c.clone();
+            let server = server.clone();
+            let msg = msg.clone();
+            let channel_id = channel_id.to_string();
+
+            std::thread::spawn(move || {
+                if let Some(uuid) =
+                    LOGGER.extract(server.wrap_err(&c, c.get_uuid()), "Unable send message")
+                {
+                    if uuid != channel_id {
+                        return;
+                    }
+
+                    LOGGER.extract(
+                        server.wrap_err(&c, c.send(types::ServerMessage::MessageCreate(msg))),
+                        "Failed to send message",
+                    );
                 }
-
-                LOGGER.extract(
-                    server.wrap_err(&c, c.send(types::ServerMessage::MessageCreate(msg))),
-                    "Failed to send message",
-                );
-            }
-        });
+            });
+        }
     }
 
     LOGGER.extract(

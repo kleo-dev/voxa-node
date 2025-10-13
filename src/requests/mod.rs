@@ -21,7 +21,7 @@ impl Server {
                     channel_id,
                     contents,
                 } => {
-                    message::send(self, client, *channel_id, contents)?;
+                    message::send(self, client, channel_id, contents)?;
                 }
 
                 ClientMessage::EditMessage {

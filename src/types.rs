@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 pub enum ClientMessage {
     /// Send a message to a channel
     SendMessage {
-        channel_id: u32,
+        channel_id: String,
         contents: String,
     },
 
@@ -26,7 +26,7 @@ pub enum ClientMessage {
 pub enum ServerMessage {
     /// Successful authentication
     Authenticated {
-        uuid: u32,
+        uuid: Author,
         messages: Vec<data::Message>,
     },
 
@@ -42,20 +42,20 @@ pub enum ServerMessage {
 
     /// A message was deleted
     MessageDelete {
-        channel_id: u32,
+        channel_id: String,
         message_id: usize,
     },
 
     /// Presence updates
     PresenceUpdate {
-        user_id: String,
+        user_id: Author,
         status: String,
     },
 
     /// Typing indicator
     Typing {
-        user_id: String,
-        channel_id: u32,
+        user_id: Author,
+        channel_id: String,
     },
 }
 
@@ -77,15 +77,19 @@ pub enum WsMessage<T: Serialize + for<'de> Deserialize<'de>> {
     String(String),
 }
 
+pub type Author = String;
+
 /// Shared data structures
 pub mod data {
     use serde::{Deserialize, Serialize};
 
+    use crate::types::Author;
+
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct Message {
         pub id: i64,
-        pub channel_id: u32,
-        pub from: u32,
+        pub channel_id: String,
+        pub from: Author,
         pub contents: String,
         pub timestamp: i64,
     }

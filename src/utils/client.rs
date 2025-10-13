@@ -100,7 +100,7 @@ pub mod handshake {
     }
 }
 
-pub struct Client(TcpStream, Option<u32>, u64);
+pub struct Client(TcpStream, Option<String>, u64);
 
 impl Client {
     /// Create a client with no timeouts
@@ -324,12 +324,15 @@ impl Client {
         self.read_t()
     }
 
-    pub fn get_uuid(&self) -> crate::Result<u32> {
-        self.1.ok_or(anyhow!("Invalid UUID"))
+    pub fn get_uuid(&self) -> crate::Result<String> {
+        match &self.1 {
+            Some(v) => Ok(v.clone()),
+            None => Err(anyhow!("Client ({}) UUID not set", self.2).into()),
+        }
     }
 
-    pub fn set_uuid(&mut self, uuid: u32) {
-        self.1 = Some(uuid)
+    pub fn set_uuid(&mut self, uuid: &str) {
+        self.1 = Some(uuid.to_string())
     }
 
     #[deprecated]
