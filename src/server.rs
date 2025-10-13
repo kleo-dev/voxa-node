@@ -12,9 +12,10 @@ use crate::{
 
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct ServerConfig {
-    server_name: String,
-    server_id: String,
-    port: u16,
+    pub server_name: String,
+    pub server_id: String,
+    pub server_key: String,
+    pub port: u16,
 }
 
 #[allow(dead_code)]
@@ -31,6 +32,7 @@ impl Default for ServerConfig {
             port: 7090,
             server_name: format!("Server Name"),
             server_id: format!("offline-server"),
+            server_key: format!(""),
         }
     }
 }
