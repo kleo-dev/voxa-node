@@ -13,11 +13,9 @@ struct AuthApiRes {
 }
 
 pub fn auth(_server: &Arc<Server>, client: &mut Client, token: &str) -> crate::Result<String> {
-    let mut res = ureq::get(format!(
-        "http://localhost:3000/api/auth?intents=server&token={token}"
-    ))
-    .call()
-    .context("Failed to authenticate")?;
+    let mut res = ureq::get(format!("https://vxchat.netlify.app/api/auth?token={token}"))
+        .call()
+        .context("Failed to authenticate")?;
     let api_res: AuthApiRes = serde_json::from_str(&res.body_mut().read_to_string()?)?;
     client.set_uuid(&api_res.user_id);
     LOGGER.info(format!("{} successfully authenticated", api_res.user_id));

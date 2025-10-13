@@ -28,7 +28,7 @@ pub mod handshake {
         if !request_line.starts_with("GET") {
             return Err(std::io::Error::new(
                 std::io::ErrorKind::InvalidData,
-                "Invalid HTTP method",
+                format!("Invalid HTTP method: {request_line}"),
             ));
         }
 
