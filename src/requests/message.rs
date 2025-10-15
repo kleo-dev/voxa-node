@@ -34,13 +34,12 @@ pub fn send(
             let c = c.clone();
             let server = server.clone();
             let msg = msg.clone();
-            let channel_id = channel_id.to_string();
 
             std::thread::spawn(move || {
                 if let Some(uuid) =
-                    LOGGER.extract(server.wrap_err(&c, c.get_uuid()), "Unable send message")
+                    LOGGER.extract(server.wrap_err(&c, c.get_uuid()), "Unable to get uuid")
                 {
-                    if uuid != channel_id {
+                    if uuid != msg.channel_id && uuid != msg.from {
                         return;
                     }
 
