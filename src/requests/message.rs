@@ -52,14 +52,6 @@ pub fn send(
         }
     }
 
-    LOGGER.extract(
-        server.wrap_err(
-            &client,
-            client.send(types::ServerMessage::MessageCreate(msg)),
-        ),
-        "Failed to send message",
-    );
-
     Ok(())
 }
 
