@@ -5,6 +5,7 @@ mod server;
 mod types;
 mod utils;
 
+use std::env;
 use std::path::PathBuf;
 
 pub use anyhow::Context as ErrorContext;
@@ -16,7 +17,14 @@ use crate::utils::vfs;
 
 fn main() -> Result<()> {
     let root = PathBuf::from("");
-    let config: ServerConfig = vfs::read_config(&root.join("config.json"))?;
+
+    let config: ServerConfig = if let Ok(env_config) = env::var("VX_CONFIG") {
+        serde_json::from_str(&env_config)?
+    } else {
+        vfs::read_config(&root.join("config.json"))?
+    };
+
     config.build(&root).run()?;
+
     Ok(())
 }

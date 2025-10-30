@@ -25,6 +25,7 @@ target
 
 /target
 
+.env
 
 *.db
 config.json
